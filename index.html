@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="gatotkaca.png">
+    <title>ACU APP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.0.0-rc.1/bin/jsencrypt.min.js"></script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        ::placeholder {
+            color: #cbd5e1;
+        }
+
+        .animate-fade-in {
+            animation: fade 0.8s ease-out forwards;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        body {
+            background-image: url('/background.jpg');
+            /* background: linear-gradient(135deg, #1a0033, #3c0079); */
+
+            background-size: cover;
+
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            /* background: rgba(0, 0, 0, 0.7); */
+            /* Layer hitam transparan */
+            z-index: -1;
+        }
+
+
+        select {
+            appearance: none;
+            background-image:
+                url("https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1em;
+            color: black;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 90%;
+                margin-left: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="to-black text-white min-h-screen relative">
+
+    <!-- Tombol Toggle Riwayat -->
+    <button onclick="toggleSidebar()"
+        class="fixed top-4 left-4 z-50 glass hover:bg-purple-800 px-4 py-2 rounded-xl shadow-lg">
+        📜 Riwayat
+    </button>
+
+    <div class="fixed top-4 right-4 z-50 flex space-x-3">
+        <a href="#" title="Instagram"><img alt="IG" class="w-6 h-6 ri-instagram-line"></a>
+        <a href="#" title="Whatsapp"><img alt="FB" class="w-6 h-6 ri-whatsapp-line"></a>
+        <a href="#" title="Github"><img alt="github" class="w-6 h-6 ri-github-fill"></a>
+
+    </div>
+    <!-- Sidebar Riwayat -->
+    <aside id="sidebar"
+        class="fixed top-0 left-0 h-full w-72 glass p-4 mt-16 ml-4 rounded-tr-3xl rounded-br-3xl z-40 transform -translate-x-full transition-transform duration-500 ease-in-out overflow-y-auto max-h-screen">
+        <h2 class="text-xl font-bold mb-4 text-center">Riwayat</h2>
+        <ul id="historyList" class="space-y-3 text-sm">
+            <li class="text-gray-400 italic">Belum ada riwayat...</li>
+        </ul>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="flex flex-col items-center justify-center min-h-screen px-4 pt-24 md:pt-0 text-center mt-16">
+        <div class="w-full max-w-2xl glass rounded-3xl shadow-xl p-6 md:p-10 animate-fade-in">
+            <!-- Header -->
+            <div class="mb-8">
+                <img src="/gatotkaca.png" class="h-20 mx-auto mb-4 animate-bounce" alt="Cybersecurity Icon">
+                <h1 class="text-3xl md:text-4xl font-extrabold">ACU</h1>
+                <p class="text-lg text-gray-300">Aplikasi Anti Cepu </p>
+                <p class="text-sm text-gray-300">Simetrik: AES, RC4 | Asimetrik: RSA</p>
+            </div>
+
+            <!-- Form -->
+            <form onsubmit="return false" class="space-y-6 text-left">
+                <div>
+                    <label for="algorithm" class="block font-medium mb-1" glass>Pilih Algoritma:</label>
+                    <select id="algorithm" class="w-full rounded-xl p-3 glass">
+                        <option class="text-black " value="AES">AES (Simetrik)</option>
+                        <option class="text-black" value="RC4">RC4 (Simetrik)</option>
+                        <option class="text-black" value="RSA">RSA (Asimetrik)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="inputText" class="block font-medium mb-1">Teks:</label>
+                    <textarea id="inputText" rows="4" class="w-full rounded-xl p-3 glass text-white"
+                        placeholder="Masukkan teks di sini..."></textarea>
+                </div>
+
+                <div>
+                    <label for="key" class="block font-medium mb-1">Kunci / Private Key:</label>
+                    <input type="text" id="key" class="w-full rounded-xl p-3 glass text-white"
+                        placeholder="Masukkan kunci...">
+                </div>
+
+                <div>
+                    <label for="publicKey" class="block font-medium mb-1">Public Key (untuk RSA):</label>
+                    <input type="text" id="publicKey" class="w-full rounded-xl p-3 glass text-white"
+                        placeholder="Opsional untuk RSA">
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button onclick="encryptText()"
+                        class="w-full md:w-1/2 bg-sky-600 hover:bg-blue-700 transition px-4 py-3 rounded-xl">
+                        Enkripsi</button>
+                    <button onclick="decryptText()"
+                        class="w-full md:w-1/2 bg-emerald-600 hover:bg-green-700 transition px-4 py-3 rounded-xl">
+                        Dekripsi</button>
+                </div>
+
+                <div>
+                    <label for="outputText" class="block font-medium mb-1">Hasil:</label>
+                    <textarea id="outputText" rows="4" class="w-full rounded-xl p-3 glass text-white"
+                        readonly></textarea>
+                    <button onclick="downloadResult()"
+                        class="mt-3 bg-emerald-600 hover:bg-indigo-700 px-4 py-2 rounded-xl">Unduh Hasil</button>
+                </div>
+
+                <div class="mt-8">
+                    <h2 class="font-bold mb-2">Hash Preview:</h2>
+                    <p class="text-sm text-gray-300">SHA256: <span id="sha256" class="break-words"></span></p>
+                    <p class="text-sm text-gray-300">MD5: <span id="md5" class="break-words"></span></p>
+                </div>
+            </form>
+        </div>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center text-sm text-gray-400 py-4 mt-10">
+        © 2025 By Rezky Desyafa ACU APP - All rights reserved.
+    </footer>
+
+    <!-- Script -->
+    <script>
+        const historyList = document.getElementById("historyList");
+        const sidebar = document.getElementById("sidebar");
+        let sidebarVisible = false; // Mulai dalam keadaan tertutup
+
+        window.addEventListener("DOMContentLoaded", () => {
+            // Pastikan sidebar tersembunyi di awal
+            sidebar.classList.add("-translate-x-full");
+        });
+
+        function toggleSidebar() {
+            sidebarVisible = !sidebarVisible;
+
+            if (sidebarVisible) {
+                sidebar.classList.remove("-translate-x-full");
+                sidebar.classList.add("translate-x-0");
+            } else {
+                sidebar.classList.remove("translate-x-0");
+                sidebar.classList.add("-translate-x-full");
+            }
+        }
+
+        function addToHistory(type, input, output) {
+            const li = document.createElement("li");
+            li.className = "bg-white/10 p-3 rounded-xl";
+            li.innerHTML = `
+            <strong>${type}</strong><br>
+            <div class="text-xs text-gray-300">Input:</div>
+            <div class="truncate w-full max-w-[240px] text-sm">${input}</div>
+            <div class="text-xs text-gray-300 mt-1">Output:</div>
+            <div class="truncate w-full max-w-[240px] text-sm">${output}</div>`;
+            if (historyList.querySelector("li.text-gray-400")) {
+                historyList.innerHTML = "";
+            }
+            historyList.prepend(li);
+        }
+
+        function encryptText() {
+            const text = document.getElementById("inputText").value.trim();
+            const key = document.getElementById("key").value.trim();
+            const publicKey = document.getElementById("publicKey").value.trim();
+            const algorithm = document.getElementById("algorithm").value;
+
+            if (!text || (!key && algorithm !== "RSA")) {
+                alert("⚠️ Masukkan teks dan kunci yang valid.");
+                return;
+            }
+
+            let encrypted = "";
+            switch (algorithm) {
+                case "AES":
+                    encrypted = CryptoJS.AES.encrypt(text, key).toString();
+                    break;
+                case "RC4":
+                    encrypted = CryptoJS.RC4.encrypt(text, key).toString();
+                    break;
+                case "RSA":
+                    if (!publicKey.startsWith("-----BEGIN PUBLIC KEY-----")) {
+                        alert("⚠️ Public Key RSA tidak valid. Harus diawali dengan -----BEGIN PUBLIC KEY-----");
+                        return;
+                    }
+                    const rsaEncrypt = new JSEncrypt();
+                    rsaEncrypt.setPublicKey(publicKey);
+                    encrypted = rsaEncrypt.encrypt(text);
+                    if (!encrypted) {
+                        alert("❌ Gagal mengenkripsi dengan RSA. Pastikan public key valid dan panjang teks tidak terlalu besar.");
+                        return;
+                    }
+                    break;
+            }
+
+            document.getElementById("outputText").value = encrypted;
+            previewHash(encrypted);
+            addToHistory("🔒 Enkripsi", text, encrypted);
+        }
+
+        function previewHash(text) {
+            const sha256 = CryptoJS.SHA256(text).toString();
+            const md5 = CryptoJS.MD5(text).toString();
+            document.getElementById("sha256").textContent = sha256;
+            document.getElementById("md5").textContent = md5;
+        }
+
+        function downloadResult() {
+            const data = document.getElementById("outputText").value;
+            const blob = new Blob([data], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "hasil_kriptografi.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+
+</body>
+
+</html>
