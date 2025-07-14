@@ -30,7 +30,8 @@
 ---
 ## 🖼️ Cuplikan Antarmuka
 
-![Preview](https://raw.githubusercontent.com/Rezkydesyafa/ACU-KRIPTOGRAFI-WEBAPP/main/public/preview.png)
+<img width="1920" height="1236" alt="screencapture-acu-webapp-vercel-app-2025-07-14-19_53_27" src="https://github.com/user-attachments/assets/c71385f5-9d0f-4d44-b8cc-3fba8aa13a6f" />
+
 
 ---
 
